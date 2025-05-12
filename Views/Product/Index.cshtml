@@ -1,0 +1,45 @@
+﻿@model IEnumerable<AgriEnergyConnect.Models.Product>
+
+@{
+    ViewData["Title"] = "Products";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="bi bi-basket-fill"></i> Products</h1>
+        <a asp-action="Create" class="btn btn-success">
+            <i class="bi bi-plus-circle"></i> Add New Product
+        </a>
+    </div>
+
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="card-title mb-0">@item.Name</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text"><strong>Category:</strong> @item.Category</p>
+                        <p class="card-text"><strong>Production Date:</strong> @item.ProductionDate.ToShortDateString()</p>
+                        <p class="card-text">@item.Description</p>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <div class="d-flex justify-content-between">
+                            <a asp-action="Edit" asp-route-id="@item.ProductID" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <a asp-action="Details" asp-route-id="@item.ProductID" class="btn btn-sm btn-outline-info">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@item.ProductID" class="btn btn-sm btn-outline-danger">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

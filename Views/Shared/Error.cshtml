@@ -1,0 +1,59 @@
+﻿@model ErrorViewModel
+@{
+    ViewData["Title"] = $"Error {Model.StatusCode}";
+    var isDevelopment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
+}
+
+<div class="container mt-5">
+    <div class="alert alert-danger">
+        <h1 class="display-4">
+            <i class="fas fa-exclamation-triangle"></i> Error @Model.StatusCode
+        </h1>
+
+        <h3>@GetErrorMessage(Model.StatusCode)</h3>
+
+        @if (Model.ShowRequestId)
+        {
+        <div class="mt-4 p-3 bg-light rounded">
+            <p><strong>Request ID:</strong> <code>@Model.RequestId</code></p>
+            <p><strong>Path:</strong> @Model.RequestPath</p>
+            <p><strong>Time:</strong> @DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss") (UTC)</p>
+        </div>
+        }
+
+        @if (isDevelopment && !string.IsNullOrEmpty(Model.DebugMessage))
+        {
+        <div class="mt-4 p-3 bg-dark text-white rounded">
+            <h4>Developer Information:</h4>
+            <pre class="text-wrap">@Model.DebugMessage</pre>
+        </div>
+        }
+        else
+        {
+        <div class="mt-4 alert alert-warning">
+            <p>For more details, enable development mode by setting:</p>
+            <code>ASPNETCORE_ENVIRONMENT=Development</code>
+            <p class="mt-2">and restarting the application.</p>
+        </div>
+        }
+    </div>
+
+    <a href="/" class="btn btn-primary mt-3">
+        <i class="fas fa-home"></i> Return Home
+    </a>
+</div>
+
+@functions {
+    public string GetErrorMessage(int statusCode)
+    {
+        return statusCode switch
+        {
+            400 => "Bad Request - The server cannot process your request",
+            401 => "Unauthorized - Authentication required",
+            403 => "Forbidden - You don't have permission",
+            404 => "Page Not Found - The requested resource doesn't exist",
+            500 => "Internal Server Error - Something went wrong on our side",
+            _ => "An unexpected error occurred"
+        };
+    }
+}

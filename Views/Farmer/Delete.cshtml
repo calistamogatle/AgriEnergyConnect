@@ -1,0 +1,55 @@
+﻿@model AgriEnergyConnect.Models.Farmer
+@{
+    ViewData["Title"] = "Delete Farmer";
+}
+
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-danger text-white">
+            <h2><i class="bi bi-exclamation-triangle"></i> @ViewData["Title"]</h2>
+        </div>
+        <div class="card-body">
+            <h4 class="text-danger">This will permanently remove the farmer and all their products!</h4>
+            <hr />
+            <dl class="row">
+                <dt class="col-sm-2">@Html.DisplayNameFor(model => model.Name)</dt>
+                <dd class="col-sm-10">@Html.DisplayFor(model => model.Name)</dd>
+
+                <dt class="col-sm-2">@Html.DisplayNameFor(model => model.Email)</dt>
+                <dd class="col-sm-10">@Html.DisplayFor(model => model.Email)</dd>
+
+                <dt class="col-sm-2">@Html.DisplayNameFor(model => model.Location)</dt>
+                <dd class="col-sm-10">@Html.DisplayFor(model => model.Location)</dd>
+            </dl>
+
+            <form asp-action="Delete">
+                <input type="hidden" asp-for="Id" />
+                <div class="form-group mt-4">
+                    <button type="submit" class="btn btn-danger">
+                        <span id="submitText">Confirm Delete</span>
+                        <span class="spinner-border spinner-border-sm d-none" id="spinner"></span>
+                    </button>
+                    <a asp-action="Index" class="btn btn-secondary ms-2">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('submit', function(e) {
+            const form = e.target;
+            const submitBtn = form.querySelector('button[type="submit"]');
+            if (submitBtn) {
+                const textSpan = submitBtn.querySelector('#submitText');
+                const spinner = submitBtn.querySelector('.spinner-border');
+                if (textSpan && spinner) {
+                    textSpan.textContent = 'Deleting...';
+                    spinner.classList.remove('d-none');
+                    submitBtn.disabled = true;
+                }
+            }
+        });
+    </script>
+}
