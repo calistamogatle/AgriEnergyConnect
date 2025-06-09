@@ -31,11 +31,11 @@ namespace AgriEnergyConnect.Controllers
                 try
                 {
                     // TODO: Replace with your actual authentication logic
-                    var user = await AuthenticateUser(model.Email, model.Password);
+                    AuthUser? user = await AuthenticateUser(model.Email, model.Password);
 
                     if (user != null)
                     {
-                        var claims = new List<Claim>
+                        List<Claim> claims = new()
                         {
                             new Claim(ClaimTypes.NameIdentifier, user.Id),
                             new Claim(ClaimTypes.Email, user.Email),
@@ -43,10 +43,10 @@ namespace AgriEnergyConnect.Controllers
                             new Claim(ClaimTypes.Role, user.Role)
                         };
 
-                        var claimsIdentity = new ClaimsIdentity(
+                        ClaimsIdentity claimsIdentity = new(
                             claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
-                        var authProperties = new AuthenticationProperties
+                        AuthenticationProperties authProperties = new()
                         {
                             IsPersistent = model.RememberMe,
                             ExpiresUtc = model.RememberMe ?
@@ -88,7 +88,7 @@ namespace AgriEnergyConnect.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
-            var response = new AuthResponse();
+            AuthResponse response = new();
 
             if (!ModelState.IsValid)
             {
@@ -99,7 +99,7 @@ namespace AgriEnergyConnect.Controllers
 
             try
             {
-                var user = await RegisterUser(model.Email, model.Password);
+                AuthUser? user = await RegisterUser(model.Email, model.Password);
 
                 if (user != null)
                 {

@@ -23,10 +23,10 @@ namespace AgriEnergyConnect.Controllers
         [Route("/Error/{statusCode}")]
         public IActionResult Error(int statusCode)
         {
-            var errorInfo = HttpContext.Features.Get<IStatusCodeReExecuteFeature>();
-            var exceptionHandler = HttpContext.Features.Get<IExceptionHandlerFeature>();
+            IStatusCodeReExecuteFeature? errorInfo = HttpContext.Features.Get<IStatusCodeReExecuteFeature>();
+            IExceptionHandlerFeature? exceptionHandler = HttpContext.Features.Get<IExceptionHandlerFeature>();
 
-            var model = new ErrorViewModel
+            ErrorViewModel model = new()
             {
                 StatusCode = statusCode,
                 RequestPath = errorInfo?.OriginalPath,

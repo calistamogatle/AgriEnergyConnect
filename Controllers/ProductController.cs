@@ -14,8 +14,8 @@ namespace AgriEnergyConnect.Controllers
         [Authorize(Roles = "Employee")]
         public async Task<IActionResult> Filter()
         {
-            var farmers = await farmerRepo.GetAllAsync();
-            var viewModel = new ProductFilterViewModel
+            IEnumerable<Farmer> farmers = await farmerRepo.GetAllAsync();
+            ProductFilterViewModel viewModel = new()
             {
                 Farmers = farmers,
                 Products = null
@@ -27,8 +27,15 @@ namespace AgriEnergyConnect.Controllers
         [HttpPost]
         public async Task<IActionResult> FilterResults(ProductFilterViewModel filter)
         {
-            var farmers = await farmerRepo.GetAllAsync();
-            var products = await productRepo.GetFilteredProductsAsync(
+            if (!ModelState.IsValid)
+            {
+                filter.Farmers = await farmerRepo.GetAllAsync();
+                filter.Products = null;
+                return View("Filter", filter);
+            }
+
+            IEnumerable<Farmer> farmers = await farmerRepo.GetAllAsync();
+            IEnumerable<Product> products = await productRepo.GetFilteredProductsAsync(
                 filter.FarmerId,
                 filter.Category,
                 filter.StartDate,
@@ -38,15 +45,18 @@ namespace AgriEnergyConnect.Controllers
             filter.Products = products;
             return View("Filter", filter);
         }
-
+        // Ensure ModelState.IsValid is checked in all POST actions (already done above)
         // Farmer dashboard - shows only current farmer's products
         [Authorize(Roles = "Farmer")]
         public async Task<IActionResult> Dashboard()
         {
-            var farmer = await GetCurrentFarmerAsync();
-            if (farmer == null) return Forbid();
+            Farmer? farmer = await GetCurrentFarmerAsync();
+            if (farmer == null)
+            {
+                return Forbid();
+            }
 
-            var products = await productRepo.GetFilteredProductsAsync(
+            IEnumerable<Product> products = await productRepo.GetFilteredProductsAsync(
                 farmerId: farmer.FarmerID,
                 category: null,
                 startDate: null,
@@ -60,15 +70,18 @@ namespace AgriEnergyConnect.Controllers
         [Authorize(Roles = "Employee")]
         public async Task<IActionResult> Index()
         {
-            var products = await productRepo.GetAllAsync();
+            IEnumerable<Product> products = await productRepo.GetAllAsync();
             return View(products);
         }
 
         [Authorize(Roles = "Farmer")]
         public async Task<IActionResult> Create()
         {
-            var farmer = await GetCurrentFarmerAsync();
-            if (farmer == null) return Forbid();
+            Farmer? farmer = await GetCurrentFarmerAsync();
+            if (farmer == null)
+            {
+                return Forbid();
+            }
 
             ViewBag.FarmerId = farmer.FarmerID;
             ViewBag.FarmerName = farmer.Name;
@@ -81,7 +94,7 @@ namespace AgriEnergyConnect.Controllers
         public async Task<IActionResult> Create([Bind("ProductID,Name,Category,ProductionDate,Description,FarmerID")] Product product)
         {
             // Ownership validation
-            var farmer = await GetCurrentFarmerAsync();
+            Farmer? farmer = await GetCurrentFarmerAsync();
             if (farmer == null || product.FarmerID != farmer.FarmerID)
             {
                 return Forbid();
@@ -101,11 +114,19 @@ namespace AgriEnergyConnect.Controllers
         [Authorize(Roles = "Farmer")]
         public async Task<IActionResult> Edit(int id)
         {
-            var product = await productRepo.GetByIdAsync(id);
-            if (product == null) return NotFound();
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            Product? product = await productRepo.GetByIdAsync(id);
+            if (product == null)
+            {
+                return NotFound();
+            }
 
             // Ownership validation
-            var farmer = await GetCurrentFarmerAsync();
+            Farmer? farmer = await GetCurrentFarmerAsync();
             if (farmer == null || product.FarmerID != farmer.FarmerID)
             {
                 return Forbid();
@@ -120,10 +141,13 @@ namespace AgriEnergyConnect.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("ProductID,Name,Category,ProductionDate,Description,FarmerID")] Product product)
         {
-            if (id != product.ProductID) return NotFound();
+            if (id != product.ProductID)
+            {
+                return NotFound();
+            }
 
             // Ownership validation
-            var farmer = await GetCurrentFarmerAsync();
+            Farmer? farmer = await GetCurrentFarmerAsync();
             if (farmer == null || product.FarmerID != farmer.FarmerID)
             {
                 return Forbid();
@@ -142,17 +166,20 @@ namespace AgriEnergyConnect.Controllers
         [Authorize(Roles = "Farmer")]
         public async Task<IActionResult> Delete(int id)
         {
-            var product = await productRepo.GetByIdAsync(id);
-            if (product == null) return NotFound();
-
-            // Ownership validation
-            var farmer = await GetCurrentFarmerAsync();
-            if (farmer == null || product.FarmerID != farmer.FarmerID)
+            if (!ModelState.IsValid)
             {
-                return Forbid();
+                return BadRequest(ModelState);
             }
 
-            return View(product);
+            Product? product = await productRepo.GetByIdAsync(id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            // Ownership validation
+            Farmer? farmer = await GetCurrentFarmerAsync();
+            return farmer == null || product.FarmerID != farmer.FarmerID ? Forbid() : View(product);
         }
 
         [Authorize(Roles = "Farmer")]
@@ -160,11 +187,19 @@ namespace AgriEnergyConnect.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var product = await productRepo.GetByIdAsync(id);
-            if (product == null) return NotFound();
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            Product? product = await productRepo.GetByIdAsync(id);
+            if (product == null)
+            {
+                return NotFound();
+            }
 
             // Ownership validation
-            var farmer = await GetCurrentFarmerAsync();
+            Farmer? farmer = await GetCurrentFarmerAsync();
             if (farmer == null || product.FarmerID != farmer.FarmerID)
             {
                 return Forbid();
@@ -176,10 +211,13 @@ namespace AgriEnergyConnect.Controllers
 
         private async Task<Farmer?> GetCurrentFarmerAsync()
         {
-            var userEmail = User.FindFirstValue(ClaimTypes.Email);
-            if (string.IsNullOrEmpty(userEmail)) return null;
+            string? userEmail = User.FindFirstValue(ClaimTypes.Email);
+            if (string.IsNullOrEmpty(userEmail))
+            {
+                return null;
+            }
 
-            var farmers = await farmerRepo.FindAsync(f => f.UserEmail == userEmail);
+            IEnumerable<Farmer> farmers = await farmerRepo.FindAsync(f => f.UserEmail == userEmail);
             return farmers.FirstOrDefault();
         }
     }

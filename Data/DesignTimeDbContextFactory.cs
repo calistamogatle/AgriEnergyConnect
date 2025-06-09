@@ -7,7 +7,7 @@ namespace AgriEnergyConnect.Data
     {
         public AppDbContext CreateDbContext(string[] args)
         {
-            var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
+            DbContextOptionsBuilder<AppDbContext> optionsBuilder = new();
             _ = optionsBuilder.UseNpgsql("Host=localhost;Database=AgriEnergyConnect;Username=postgres;Password=Kari@21100");
 
             // Resolve ambiguity by explicitly specifying the constructor

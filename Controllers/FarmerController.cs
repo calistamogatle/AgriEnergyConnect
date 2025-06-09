@@ -10,7 +10,7 @@ namespace AgriEnergyConnect.Controllers
     {
         public async Task<IActionResult> Index()
         {
-            var farmersWithProducts = await farmerRepo.GetFarmersWithProductsAsync();
+            IEnumerable<Farmer> farmersWithProducts = await farmerRepo.GetFarmersWithProductsAsync();
             return View(farmersWithProducts);
         }
 
@@ -21,9 +21,8 @@ namespace AgriEnergyConnect.Controllers
 
         public async Task<IActionResult> Edit(int id)
         {
-            var farmer = await farmerRepo.GetByIdAsync(id);
-            if (farmer == null) return NotFound();
-            return View(farmer);
+            Farmer? farmer = await farmerRepo.GetByIdAsync(id);
+            return farmer == null ? NotFound() : View(farmer);
         }
 
         [HttpPost]
@@ -42,7 +41,10 @@ namespace AgriEnergyConnect.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Email,Location")] Farmer farmer)
         {
-            if (id != farmer.FarmerID) return NotFound();
+            if (id != farmer.FarmerID)
+            {
+                return NotFound();
+            }
 
             if (ModelState.IsValid)
             {
@@ -54,9 +56,8 @@ namespace AgriEnergyConnect.Controllers
 
         public async Task<IActionResult> Delete(int id)
         {
-            var farmer = await farmerRepo.GetByIdAsync(id);
-            if (farmer == null) return NotFound();
-            return View(farmer);
+            Farmer? farmer = await farmerRepo.GetByIdAsync(id);
+            return farmer == null ? NotFound() : View(farmer);
         }
 
         [HttpPost, ActionName("Delete")]

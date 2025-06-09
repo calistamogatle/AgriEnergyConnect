@@ -48,7 +48,7 @@ namespace AgriEnergyConnect.Data
 
         public async Task DeleteAsync(int id)
         {
-            var entity = await GetByIdAsync(id);
+            T? entity = await GetByIdAsync(id);
             if (entity != null)
             {
                 _ = _dbSet.Remove(entity);
@@ -58,7 +58,7 @@ namespace AgriEnergyConnect.Data
 
         public async Task<bool> ExistsAsync(int id)
         {
-            var entity = await GetByIdAsync(id);
+            T? entity = await GetByIdAsync(id);
             return entity != null;
         }
     }

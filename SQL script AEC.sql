@@ -2,16 +2,16 @@
 
 -- DROP DATABASE IF EXISTS "AgriEnergyConnect";
 
-CREATE DATABASE "AgriEnergyConnect"
-    WITH
-    OWNER = postgres
-    ENCODING = 'UTF8'
-    LC_COLLATE = 'C.UTF-8'
-    LC_CTYPE = 'C.UTF-8'
-    LOCALE_PROVIDER = 'libc'
-    TABLESPACE = pg_default
-    CONNECTION LIMIT = -1
-    IS_TEMPLATE = False;
+CREATE DATABASE [AgriEnergyConnect];
+-- The following options are PostgreSQL-specific and have been removed for SQL Server compatibility:
+-- OWNER = postgres
+-- ENCODING = 'UTF8'
+-- LC_COLLATE = 'C.UTF-8'
+-- LC_CTYPE = 'C.UTF-8'
+-- LOCALE_PROVIDER = 'libc'
+-- TABLESPACE = pg_default
+-- CONNECTION LIMIT = -1
+-- IS_TEMPLATE = False;
 
 	CREATE TABLE Farmers (
     FarmerID SERIAL PRIMARY KEY,

@@ -22,7 +22,7 @@ namespace AgriEnergyConnect.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Employee>> GetEmployee(int id)
         {
-            var employee = await _context.Employees.FindAsync(id);
+            Employee? employee = await _context.Employees.FindAsync(id);
 
             return employee == null ? NotFound() : employee;
         }
@@ -71,7 +71,7 @@ namespace AgriEnergyConnect.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteEmployee(int id)
         {
-            var employee = await _context.Employees.FindAsync(id);
+            Employee? employee = await _context.Employees.FindAsync(id);
             if (employee == null)
             {
                 return NotFound();

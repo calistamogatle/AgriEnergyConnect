@@ -46,7 +46,10 @@ namespace AgriEnergyConnect.Models
             set
             {
                 if (string.IsNullOrEmpty(value))
+                {
                     throw new ArgumentException("Category cannot be null or empty");
+                }
+
                 Category = value;
             }
         }

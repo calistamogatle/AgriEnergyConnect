@@ -38,12 +38,10 @@
             overflow-x: auto;
         }
         /* Mobile adjustments */
-      
+
         /* Enhanced mobile navigation */
         .navbar-collapse {
             padding: 1rem 0;
-        }
-
         }
     </style>
 </head>
@@ -93,7 +91,7 @@
 
     <div class="container">
         <!-- Global Validation Summary -->
-        @if (ViewData.ModelState.ErrorCount > 0)
+        @if (ViewData.ModelState != null && ViewData.ModelState.ErrorCount > 0)
         {
             <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
                 <h5 class="alert-heading">Please correct the following errors:</h5>

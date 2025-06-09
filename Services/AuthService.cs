@@ -32,7 +32,7 @@ namespace AgriEnergyConnect.Services
                 }
 
                 // Create user
-                var newUser = new AuthUser
+                AuthUser newUser = new()
                 {
                     Email = model.Email,
                     UserName = model.Email,
@@ -82,7 +82,7 @@ namespace AgriEnergyConnect.Services
                     };
                 }
 
-                var verificationResult = _passwordHasher.VerifyHashedPassword(
+                PasswordVerificationResult verificationResult = _passwordHasher.VerifyHashedPassword(
                     user, user.PasswordHash, model.Password);
 
                 if (verificationResult != PasswordVerificationResult.Success)

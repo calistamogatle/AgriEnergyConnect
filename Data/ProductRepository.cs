@@ -12,7 +12,7 @@ namespace AgriEnergyConnect.Data
             DateTime? endDate)
         {
             // Start with base query including Farmer relationship
-            var query = _dbSet
+            IQueryable<Product> query = _dbSet
                 .Include(p => p.Farmer)
                 .AsQueryable();
 
